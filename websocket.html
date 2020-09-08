@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      const addr = 'ws://localhost:8080/'
+      const client = new WebSocket(addr);
+
+      if (!client.readyState === WebSocket.OPEN) {
+        throw new Error(`Cannot connect to websocket @ "${addr}"`);
+      }
+
+      console.log(`connected to ${addr}`);
+
+      const vals = [];
+
+      client.onmessage = msg => {
+        console.log(msg);
+        const sensorVal = msg.data;
+        vals.push(sensorVal);
+        console.log(`pushed ${sensorVal} to vals (${vals.length})`);
+        const isHigh = sensorVal >= 800;
+        const isMidHigh = sensorVal >= 600 && sensorVal < 800;
+        const isMid = sensorVal >= 400 && sensorVal < 600;
+        const isMidLow = sensorVal >= 200 && sensorVal < 400;
+        const isLow = sensorVal < 200;
+
+        let newClass = '';
+
+        if (isHigh) {
+          newClass = 'high';
+
+        }else if (isMidHigh) {
+          newClass = 'mid-high';
+
+        } else if (isMid) {
+          newClass = 'mid';
+
+        } else if (isMidLow) {
+          newClass = 'mid-low';
+
+        }else if (isLow) {
+          newClass = 'low';
+        }
+
+        document.body.className = newClass;
+      };
+    </script>
+
+    <style>
+      body {
+        background-color: white;
+        -webkit-transition: background-color 2s ease-out;
+      }
+
+      .high {
+        background-color: white;
+      }
+
+      .mid-high {
+        background-color: yellow;
+      }
+
+      .mid {
+        background-color: orange;
+      }
+
+      .mid-low {
+        background-color: red;
+      }
+
+      .low {
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+
+  </body>
+</html>
